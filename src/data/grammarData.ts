@@ -1,0 +1,163 @@
+import type { CFGDefinition, PDADefinition } from '../types';
+
+export const alphaCFG: CFGDefinition = {
+  startSymbol: 'S',
+  description: 'Context-Free Grammar for (aba + bab)(a+b)*(bab)(a+b)*(a+b+ab+ba)(a+b+aa)*',
+  productions: [
+    {
+      nonTerminal: 'S',
+      productions: ['ABCDEF'],
+      description: 'The Whole String: ABCDEF',
+    },
+    {
+      nonTerminal: 'A',
+      productions: ['aba', 'bab'],
+      description: 'Prefix: aba or bab',
+    },
+    {
+      nonTerminal: 'B',
+      productions: ['aB', 'bB', 'Λ'],
+      description: 'Wildcard 1: Any combination of as and bs, or empty.',
+    },
+    {
+      nonTerminal: 'C',
+      productions: ['bab'],
+      description: 'Middle: Exactly bab',
+    },
+    {
+      nonTerminal: 'D',
+      productions: ['aD', 'bD', 'Λ'],
+      description: 'Wildcard 2: Any combination of as and bs, or empty.',
+    },
+    {
+      nonTerminal: 'E',
+      productions: ['a', 'b', 'ab', 'ba'],
+      description: 'Suffix 1: a, b, ab, or ba',
+    },
+    {
+      nonTerminal: 'F',
+      productions: ['a', 'b', 'aa'],
+      description: 'Suffix 2: a, b, or aa',
+    },
+  ],
+};
+
+export const binaryCFG: CFGDefinition = {
+  startSymbol: 'S',
+  description: 'Context-Free Grammar for ((101+111)+(1+0+11))(1+0+01)(111+000+101)(1+0)*',
+  productions: [
+    {
+      nonTerminal: 'S',
+      productions: ['WXYZ'],
+      description: 'The Whole String: WXYZ',
+    },
+    {
+      nonTerminal: 'W',
+      productions: ['101', '111', '1', '0', '11'],
+      description: 'Group 1: 101, 111, 1, 0, or 11',
+    },
+    {
+      nonTerminal: 'X',
+      productions: ['1', '0', '01'],
+      description: 'Group 2: 1, 0, or 01',
+    },
+    {
+      nonTerminal: 'Y',
+      productions: ['111', '000', '101'],
+      description: 'Group 3: 111, 000, or 101',
+    },
+    {
+      nonTerminal: 'Z',
+      productions: ['1Z', '0Z', 'Λ'],
+      description: 'Final Loop: Any combination of 1s and 0s, or empty.',
+    },
+  ],
+};
+
+export const alphaPDA: PDADefinition = {
+  id: 'alpha-pda-detailed',
+  name: 'Alphabetic PDA Blueprint',
+  description: 'High-Fidelity Flowchart for (aba+bab)(a+b)*(bab)(a+b)*(a+b+ab+ba)(a+b+aa)*',
+  viewBox: '0 0 1600 800',
+  states: [
+    { id: 'start', type: 'start', label: 'START', x: 50, y: 400 },
+    { id: 'r1', type: 'read', label: 'READ₁', x: 180, y: 300 },
+    { id: 'r_aba_1', type: 'read', label: 'READ_a', x: 320, y: 200 },
+    { id: 'r_aba_2', type: 'read', label: 'READ_b', x: 460, y: 200 },
+    { id: 'r_bab_1', type: 'read', label: 'READ_b', x: 320, y: 400 },
+    { id: 'r_bab_2', type: 'read', label: 'READ_a', x: 460, y: 400 },
+    { id: 'loop1', type: 'read', label: 'LOOP₁', x: 650, y: 300 },
+    { id: 'mid_b', type: 'read', label: 'READ_b', x: 800, y: 450 },
+    { id: 'mid_a', type: 'read', label: 'READ_a', x: 950, y: 550 },
+    { id: 'mid_b2', type: 'read', label: 'READ_b', x: 1100, y: 550 },
+    { id: 'loop2', type: 'read', label: 'LOOP₂', x: 1250, y: 650 },
+    { id: 'suffix_a', type: 'read', label: 'READ_a', x: 1400, y: 750 },
+    { id: 'accept', type: 'accept', label: 'ACCEPT', x: 1550, y: 400 },
+    { id: 'reject', type: 'reject', label: 'REJECT', x: 800, y: 100 },
+  ],
+  transitions: [
+    { from: 'start', to: 'r1', label: '' },
+    { from: 'r1', to: 'r_aba_1', label: 'a' },
+    { from: 'r1', to: 'r_bab_1', label: 'b' },
+    { from: 'r_aba_1', to: 'r_aba_2', label: 'b' },
+    { from: 'r_bab_1', to: 'r_bab_2', label: 'a' },
+    { from: 'r_aba_2', to: 'loop1', label: 'a' },
+    { from: 'r_bab_2', to: 'loop1', label: 'b' },
+    { from: 'loop1', to: 'loop1', label: 'a,b', curve: 'self-loop-top' },
+    { from: 'loop1', to: 'mid_b', label: 'b' },
+    { from: 'mid_b', to: 'mid_a', label: 'a' },
+    { from: 'mid_a', to: 'mid_b2', label: 'b' },
+    { from: 'mid_b2', to: 'loop2', label: 'a,b' },
+    { from: 'loop2', to: 'loop2', label: 'a,b', curve: 'self-loop-top' },
+    { from: 'loop2', to: 'suffix_a', label: 'a,b' },
+    { from: 'suffix_a', to: 'accept', label: 'Δ' },
+    { from: 'r1', to: 'reject', label: 'Δ' },
+    { from: 'mid_b', to: 'reject', label: 'Δ' },
+  ],
+};
+
+export const binaryPDA: PDADefinition = {
+  id: 'binary-pda-detailed',
+  name: 'Binary PDA Blueprint',
+  description: 'Formal Flowchart for ((101+111)+(1+0+11))(1+0+01)(111+000+101)(1+0)*',
+  viewBox: '0 0 1600 600',
+  states: [
+    { id: 'start', type: 'start', label: 'START', x: 50, y: 300 },
+    { id: 'r1', type: 'read', label: 'READ₁', x: 180, y: 300 },
+    { id: 'r2', type: 'read', label: 'READ₂', x: 300, y: 200 },
+    { id: 'r3', type: 'read', label: 'READ₃', x: 300, y: 400 },
+    { id: 'r4', type: 'read', label: 'READ₄', x: 450, y: 150 },
+    { id: 'r5', type: 'read', label: 'READ₅', x: 450, y: 250 },
+    { id: 'r6', type: 'read', label: 'READ₆', x: 450, y: 350 },
+    { id: 'r7', type: 'read', label: 'READ₇', x: 600, y: 300 },
+    { id: 'r8', type: 'read', label: 'READ₈', x: 750, y: 300 },
+    { id: 'r9', type: 'read', label: 'READ₉', x: 900, y: 200 },
+    { id: 'r10', type: 'read', label: 'READ₁₀', x: 900, y: 400 },
+    { id: 'r11', type: 'read', label: 'READ₁₁', x: 1050, y: 150 },
+    { id: 'r12', type: 'read', label: 'READ₁₂', x: 1050, y: 250 },
+    { id: 'r13', type: 'read', label: 'READ₁₃', x: 1200, y: 300 },
+    { id: 'loop', type: 'read', label: 'LOOP', x: 1350, y: 300 },
+    { id: 'accept', type: 'accept', label: 'ACCEPT', x: 1500, y: 300 },
+  ],
+  transitions: [
+    { from: 'start', to: 'r1', label: '' },
+    { from: 'r1', to: 'r2', label: '1' },
+    { from: 'r1', to: 'r3', label: '0' },
+    { from: 'r2', to: 'r4', label: '0' },
+    { from: 'r2', to: 'r5', label: '1' },
+    { from: 'r3', to: 'r6', label: '1' },
+    { from: 'r4', to: 'r7', label: '1' },
+    { from: 'r5', to: 'r7', label: '1' },
+    { from: 'r6', to: 'r7', label: '1' },
+    { from: 'r7', to: 'r8', label: '0,1' },
+    { from: 'r8', to: 'r9', label: '1' },
+    { from: 'r8', to: 'r10', label: '0' },
+    { from: 'r9', to: 'r11', label: '1' },
+    { from: 'r9', to: 'r12', label: '0' },
+    { from: 'r11', to: 'r13', label: '1' },
+    { from: 'r12', to: 'r13', label: '1' },
+    { from: 'r13', to: 'loop', label: '0,1' },
+    { from: 'loop', to: 'loop', label: '0,1', curve: 'self-loop-top' },
+    { from: 'loop', to: 'accept', label: 'Δ' },
+  ],
+};
