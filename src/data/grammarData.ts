@@ -3,6 +3,8 @@ import type { CFGDefinition, PDADefinition } from '../types';
 export const alphaCFG: CFGDefinition = {
   startSymbol: 'S',
   description: 'Context-Free Grammar for (aba + bab)(a+b)*(bab)(a+b)*(a+b+ab+ba)(a+b+aa)*',
+  alphabet: ['a', 'b'],
+  examples: ['ababababa', 'babababaaa', 'ababbababa', 'babbababa', 'ababaabab'],
   productions: [
     {
       nonTerminal: 'S',
@@ -45,6 +47,8 @@ export const alphaCFG: CFGDefinition = {
 export const binaryCFG: CFGDefinition = {
   startSymbol: 'S',
   description: 'Context-Free Grammar for ((101+111)+(1+0+11))(1+0+01)(111+000+101)(1+0)*',
+  alphabet: ['0', '1'],
+  examples: ['11100111', '10101000', '11001111', '11011110'],
   productions: [
     {
       nonTerminal: 'S',
@@ -79,6 +83,8 @@ export const alphaPDA: PDADefinition = {
   name: 'Alphabetic PDA Blueprint',
   description: 'High-Fidelity Flowchart for (aba+bab)(a+b)*(bab)(a+b)*(a+b+ab+ba)(a+b+aa)*',
   viewBox: '0 0 1600 800',
+  alphabet: ['a', 'b'],
+  examples: ['ababababa', 'babababaaa', 'ababbababa', 'babbababa'],
   states: [
     { id: 'start', type: 'start', label: 'START', x: 50, y: 400 },
     { id: 'r1', type: 'read', label: 'READ₁', x: 180, y: 300 },
@@ -121,6 +127,8 @@ export const binaryPDA: PDADefinition = {
   name: 'Binary PDA Blueprint',
   description: 'Formal Flowchart for ((101+111)+(1+0+11))(1+0+01)(111+000+101)(1+0)*',
   viewBox: '0 0 1600 600',
+  alphabet: ['0', '1'],
+  examples: ['11100111', '10101000', '11001111', '11011110'],
   states: [
     { id: 'start', type: 'start', label: 'START', x: 50, y: 300 },
     { id: 'r1', type: 'read', label: 'READ₁', x: 180, y: 300 },
