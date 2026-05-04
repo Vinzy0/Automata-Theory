@@ -27,3 +27,9 @@ bug*.png
 
 # Reference PDFs
 *.pdf
+
+# Planning & analysis files
+PLAN.md
+CONSISTENCY_FIX_PLAN.md
+TODO.md
+.sisyphus/

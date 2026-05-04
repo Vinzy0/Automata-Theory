@@ -346,6 +346,80 @@ All three tabs should feel like the same app:
 
 ---
 
+## Part 11: Reference Algorithms — Concrete Implementation Approaches
+
+All three programs accept/reject the same strings. The DFA, CFG, and PDA all describe the same regular language. Here are the step-by-step algorithms for each.
+
+---
+
+### 11.1 DFA Program — "The Lookup Table Method"
+
+A DFA is coded as a simple loop and a dictionary. It reads one character at a time and changes state based on a hardcoded table.
+
+**Setup:**
+- Variable `current_state = 0`
+- Dictionary/hash map for transition rules:
+
+| State | On '0' | On '1' |
+|-------|--------|--------|
+| 0 | 1 | 1 |
+| 1 | 3 | 2 |
+| 2 | 5 | 4 |
+| 3 | 6 | 2 |
+| 4 | 5 | 7 |
+| 5 | 6 | 7 |
+| 6 | 7 | 2 |
+| 7 | 7 | 7 |
+
+**Logic:**
+1. Loop through every character in input string
+2. Inside loop, update `current_state` by checking dictionary for current character
+3. When loop finishes, check `current_state`
+4. If `current_state == 7` → Accept. Otherwise → Reject
+
+---
+
+### 11.2 CFG Program — "The String Slicing Method"
+
+A CFG is coded by testing combinations. The grammar splits the string into four parts (A, B, C, D), and the program tries every possible way to slice into four pieces.
+
+**Setup — Part Rules:**
+- **Part A** must be one of: `"101"`, `"111"`, `"1"`, `"0"`, or `"11"`
+- **Part C** must be one of: `"111"`, `"000"`, or `"101"`
+- **Parts B and D** can be any mix of '1's and '0's, or completely empty
+
+**Logic:**
+1. Create loops to slice input string into four segments (try every possible index)
+2. For every combination of 4 slices, run checks:
+   - Does Slice 1 match a valid Part A string?
+   - Does Slice 3 match a valid Part C string?
+   - Do Slices 2 and 4 contain only '1's and '0's?
+3. If combination passes all checks → return True immediately
+4. If every slicing combination fails → return False
+
+---
+
+### 11.3 PDA Program — "The Stack + Recursion Method"
+
+Because the expression doesn't need memory, the PDA stack is a formality. The program uses recursion to handle branching paths (non-determinism) and pushes/pops empty values to satisfy the PDA definition.
+
+**Setup:**
+- Function `evaluate_PDA(string, current_index, current_state, stack_array)`
+- Every state transition: push `""` into stack_array, immediately pop it back out
+
+**Logic:**
+1. Function looks at character at `current_index`
+2. Checks current state for available paths
+3. At `(1+0)*` loops: can choose to stay in loop OR exit to find `"111"`, `"000"`, or `"101"`
+4. Handles via two recursive calls:
+   - **Branch 1**: Stay in loop, move to next character
+   - **Branch 2**: Exit loop, check if next characters match required sequence
+5. If `current_index` reaches end of string → check if in Accept State
+6. If any recursive branch returns True → whole program returns True
+7. If all branches hit dead end → return False
+
+---
+
 ## Appendix: Quick Reference — DFA → CFG → PDA Mapping
 
 | Element | DFA | CFG | PDA |

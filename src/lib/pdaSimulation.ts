@@ -75,27 +75,17 @@ export function buildPDASteps(pda: PDADefinition, input: string): PDASimulationR
     }
 
     // Reached accept with all input consumed — success
-    if (stateId === 'accept' && pos === input.length) {
+    if (currentStateObj?.type === 'accept' && pos === input.length) {
       best = { steps: path, inputPosition: pos };
       return true;
     }
-
-    // Reached accept but input not fully consumed — dead end
-    if (stateId === 'accept') {
-      tryUpdateBest(path, pos);
-      return false;
-    }
+    // Note: If accept state but input remaining, continue to try outgoing transitions (e.g., self-loops)
 
     const outgoing = adjacency.get(stateId) || [];
 
-    // Self-loops first (greedy), then declaration order
-    const sorted = [...outgoing].sort((a, b) => {
-      const aLoop = a.from === a.to;
-      const bLoop = b.from === b.to;
-      if (aLoop && !bLoop) return -1;
-      if (!aLoop && bLoop) return 1;
-      return 0;
-    });
+    // Try all paths in declaration order (no greedy optimization)
+    // This ensures we don't miss valid paths through the automaton
+    const sorted = [...outgoing];
 
     const len = input.length;
     const currentChar = pos < len ? input[pos] : null;
@@ -136,6 +126,9 @@ export function buildPDASteps(pda: PDADefinition, input: string): PDASimulationR
     return false;
   }
 
-  const succeeded = dfs('start', 0, [], new Set(['start:0']));
+  // Find the start state dynamically
+  const startState = pda.states.find(s => s.type === 'start');
+  const startStateId = startState?.id ?? 'start';
+  const succeeded = dfs(startStateId, 0, [], new Set([`${startStateId}:0`]));
   return { steps: best.steps, succeeded };
 }

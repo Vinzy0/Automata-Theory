@@ -244,42 +244,44 @@ export default function DFAPage({ dfa, choice, onBack }: DFAPageProps) {
           )}
 
           {activeTab === 'cfg' && (
-            <div className="flex flex-col gap-8">
-              {/* Simulation panel — full width on top */}
-              <div className="glass-card rounded-[2.5rem] p-8 relative overflow-hidden">
-                <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-50 ${accent}`} />
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-2xl ${accentBg}`}>
-                      <BookOpen size={20} className={accent} />
-                    </div>
-                    <div>
-                      <h2 className="text-sm font-black text-white uppercase tracking-[0.15em]">Grammar Derivation Engine</h2>
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className={`w-2 h-2 rounded-full animate-pulse ${isTeal ? 'bg-teal-500' : 'bg-blue-500'}`} />
-                        <span className="text-[10px] font-mono font-bold text-slate-500 uppercase">Live_Production_Stream</span>
+            <div className="grid lg:grid-cols-12 gap-8 h-full">
+              <div className="lg:col-span-8 flex flex-col gap-8">
+                <div id="cfg-grammar-container" className="glass-card rounded-[2.5rem] p-8 relative overflow-hidden">
+                  <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-50 ${accent}`} />
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-2xl ${accentBg}`}>
+                        <BookOpen size={20} className={accent} />
+                      </div>
+                      <div>
+                        <h2 className="text-sm font-black text-white uppercase tracking-[0.15em]">Grammar Derivation Engine</h2>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className={`w-2 h-2 rounded-full animate-pulse ${isTeal ? 'bg-teal-500' : 'bg-blue-500'}`} />
+                          <span className="text-[10px] font-mono font-bold text-slate-500 uppercase">Live_Production_Stream</span>
+                        </div>
                       </div>
                     </div>
+                    <div className={`px-2.5 py-1 rounded-lg border text-[10px] font-black uppercase tracking-[0.1em] ${
+                      isTeal ? 'bg-teal-500/10 border-teal-500/30 text-teal-400' : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+                    }`}>
+                      LEFTMOST MODE
+                    </div>
                   </div>
-                  <div className={`px-2.5 py-1 rounded-lg border text-[10px] font-black uppercase tracking-[0.1em] ${
-                    isTeal ? 'bg-teal-500/10 border-teal-500/30 text-teal-400' : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
-                  }`}>
-                    LEFTMOST MODE
+
+                  <div className="w-full bg-slate-950/40 rounded-[2rem] border border-white/5 relative overflow-hidden shadow-2xl">
+                    <CFGSection cfg={cfg} derivationSteps={cfgSteps} currentStepIndex={cfgStepIndex} isTeal={isTeal} />
                   </div>
                 </div>
-                <CFGSimulationPanel
-                  cfg={cfg}
-                  onStepChange={(_step, index, allSteps) => { setCfgStepIndex(index); setCfgSteps(allSteps); }}
-                  onResult={() => {}}
-                  isTeal={isTeal}
-                />
               </div>
 
-              {/* Grammar rules — full width below */}
-              <div className="glass-card rounded-[2.5rem] p-8 relative overflow-hidden">
-                <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-50 ${accent}`} />
-                <div className="w-full bg-slate-950/40 rounded-[2rem] border border-white/5 relative overflow-hidden shadow-2xl">
-                  <CFGSection cfg={cfg} derivationSteps={cfgSteps} currentStepIndex={cfgStepIndex} isTeal={isTeal} />
+              <div className="lg:col-span-4">
+                <div className="glass-card rounded-[2.5rem] p-8 h-full sticky top-[6.5rem]">
+                  <CFGSimulationPanel
+                    cfg={cfg}
+                    onStepChange={(_step, index, allSteps) => { setCfgStepIndex(index); setCfgSteps(allSteps); }}
+                    onResult={() => {}}
+                    isTeal={isTeal}
+                  />
                 </div>
               </div>
             </div>
